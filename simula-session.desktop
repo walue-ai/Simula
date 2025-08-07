@@ -6,6 +6,7 @@ Terminal=false
 TryExec=/usr/local/bin/simula-session
 Type=Application
 DesktopNames=Simula
+X-GDM-SessionRegisters=true
 
 [X-Window Manager]
 SessionManaged=true
