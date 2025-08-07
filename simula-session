@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Simula Desktop Environment Session Script
+# This script launches Simula as a desktop environment
+
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=Simula
+export XDG_SESSION_DESKTOP=Simula
+
+# Set up Nix environment - try multiple possible locations
+if [ -f ~/.nix-profile/etc/profile.d/nix.sh ]; then
+    source ~/.nix-profile/etc/profile.d/nix.sh
+elif [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+    source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+
+# Enable experimental features for nix command
+export NIX_CONFIG="experimental-features = nix-command flakes"
+
+# Set up desktop-specific configuration
+mkdir -p ~/.config/Simula
+if [ -n "$SIMULA_NIX_DIR" ] && [ -f "$SIMULA_NIX_DIR/opt/simula/config/desktop-config.dhall" ]; then
+    cp "$SIMULA_NIX_DIR/opt/simula/config/desktop-config.dhall" ~/.config/Simula/config.dhall
+fi
+
+# Launch Simula in desktop mode
+exec nix run --extra-experimental-features "nix-command flakes" github:walue-ai/Simula

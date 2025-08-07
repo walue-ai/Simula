@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Simula VR Desktop
+Comment=VR Desktop Environment powered by Simula
+Exec=/usr/local/bin/simula-session
+Type=XSession
+DesktopNames=Simula
