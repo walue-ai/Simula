@@ -699,10 +699,11 @@ ready gss _ = do
   rrModeMaybe <- lookupEnv "RUNNING_UNDER_RR"
   maybeLogDir <- lookupEnv "SIMULA_LOG_DIR"
   let logDir = fromMaybe "." maybeLogDir
-  -- Delete log file
+  -- Ensure log directory exists and delete log file
   case rrModeMaybe of
     Just "1" -> return ()
     _ -> do putStrLn "Running Simula without RR"
+            createDirectoryIfMissing True logDir
             readProcess "touch" [logDir ++ "/log.txt"] []
             readProcess "rm" [logDir ++ "/log.txt"] []
             return ()
