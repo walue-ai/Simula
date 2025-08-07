@@ -1,10 +1,11 @@
 [Desktop Entry]
 Version=1.0
-Type=Application
-Name=Simula
-GenericName=Simula
-Comment=VR Compositor
-Exec=godot
-Icon=godot
+Type=XSession
+Name=Simula VR Desktop
+GenericName=Simula VR Desktop Environment
+Comment=VR Desktop Environment and Wayland Compositor
+Exec=simula-session
+Icon=simula
 Terminal=false
-Categories=Game;
+Categories=System;
+DesktopNames=Simula
