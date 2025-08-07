@@ -250,8 +250,17 @@
             if grep -qi NixOS /etc/os-release; then
               ${pkgs.util-linux}/bin/script -qfc "$GODOT_BINARY -m \"$PROJECT_PATH\" $@" >(${pkgs.coreutils}/bin/stdbuf -oL -eL ${pkgs.colorized-logs}/bin/ansi2txt > "$SIMULA_DATA_DIR/log/output.file")
             else
-              echo "Detected non-NixOS distribution, so running Simula with nixGL"
-              NIXPKGS_ALLOW_UNFREE=1 nix run --impure github:nix-community/nixGL -- ${pkgs.util-linux}/bin/script -qfc "$GODOT_BINARY -m \"$PROJECT_PATH\" $@" >(${pkgs.coreutils}/bin/stdbuf -oL -eL ${pkgs.colorized-logs}/bin/ansi2txt > "$SIMULA_DATA_DIR/log/output.file")
+              echo "Detected non-NixOS distribution, attempting to use nixGL if available"
+              if command -v nixGLIntel >/dev/null 2>&1; then
+                echo "Using pre-installed nixGLIntel"
+                nixGLIntel ${pkgs.util-linux}/bin/script -qfc "$GODOT_BINARY -m \"$PROJECT_PATH\" $@" >(${pkgs.coreutils}/bin/stdbuf -oL -eL ${pkgs.colorized-logs}/bin/ansi2txt > "$SIMULA_DATA_DIR/log/output.file")
+              elif command -v nixGL >/dev/null 2>&1; then
+                echo "Using pre-installed nixGL"
+                nixGL ${pkgs.util-linux}/bin/script -qfc "$GODOT_BINARY -m \"$PROJECT_PATH\" $@" >(${pkgs.coreutils}/bin/stdbuf -oL -eL ${pkgs.colorized-logs}/bin/ansi2txt > "$SIMULA_DATA_DIR/log/output.file")
+              else
+                echo "No nixGL found, running without GPU acceleration (may not work properly)"
+                ${pkgs.util-linux}/bin/script -qfc "$GODOT_BINARY -m \"$PROJECT_PATH\" $@" >(${pkgs.coreutils}/bin/stdbuf -oL -eL ${pkgs.colorized-logs}/bin/ansi2txt > "$SIMULA_DATA_DIR/log/output.file")
+              fi
             fi
           '';
 
