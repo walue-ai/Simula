@@ -7,6 +7,12 @@ export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP=Simula
 export XDG_SESSION_DESKTOP=Simula
 
+# Force Wayland display server for Godot/Simula
+export EGL_PLATFORM=wayland
+export GDK_BACKEND=wayland
+export QT_QPA_PLATFORM=wayland
+export WAYLAND_DISPLAY=wayland-0
+
 # Set up Nix environment - try multiple possible locations
 if [ -f ~/.nix-profile/etc/profile.d/nix.sh ]; then
     source ~/.nix-profile/etc/profile.d/nix.sh
@@ -23,5 +29,5 @@ if [ -n "$SIMULA_NIX_DIR" ] && [ -f "$SIMULA_NIX_DIR/opt/simula/config/desktop-c
     cp "$SIMULA_NIX_DIR/opt/simula/config/desktop-config.dhall" ~/.config/Simula/config.dhall
 fi
 
-# Launch Simula in desktop mode
-exec nix run --extra-experimental-features "nix-command flakes" github:walue-ai/Simula
+# Launch Simula in desktop mode with Wayland display driver
+exec nix run --extra-experimental-features "nix-command flakes" github:walue-ai/Simula -- --display-driver wayland
