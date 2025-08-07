@@ -7,7 +7,12 @@ static void flib_init() {
   hs_init(&argc, &argv_);
 }
 
+static int hs_exit_called = 0;
+
 static void flib_fini() __attribute__((destructor));
 static void flib_fini() {
-  hs_exit();
+  if (!hs_exit_called) {
+    hs_exit_called = 1;
+    hs_exit();
+  }
 }
