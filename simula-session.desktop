@@ -2,5 +2,10 @@
 Name=Simula VR Desktop
 Comment=VR Desktop Environment powered by Simula
 Exec=/usr/local/bin/simula-session
-Type=XSession
+Terminal=false
+TryExec=/usr/local/bin/simula-session
+Type=Application
 DesktopNames=Simula
+
+[X-Window Manager]
+SessionManaged=true

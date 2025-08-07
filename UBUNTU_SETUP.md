@@ -126,9 +126,23 @@ nix run github:walue-ai/Simula
 **Problem**: "Simula VR Desktop" doesn't appear in session selection
 
 **Solutions**:
-- Verify files are installed: `ls /usr/share/wayland-sessions/simula-session.desktop`
+- Verify files are installed: `ls /usr/share/wayland-sessions/simula-session.desktop /usr/share/xsessions/simula-session.desktop`
 - Check script permissions: `ls -la /usr/local/bin/simula-session`
-- Restart display manager: `sudo systemctl restart gdm` (or your display manager)
+- Restart display manager: 
+  - For GDM: `sudo systemctl restart gdm`
+  - For LightDM: `sudo systemctl restart lightdm`
+  - For SDDM: `sudo systemctl restart sddm`
+- Check display manager logs: `journalctl -u gdm -f` (replace gdm with your display manager)
+- Verify session file format: `cat /usr/share/xsessions/simula-session.desktop`
+
+**Manual Installation**:
+If automatic installation fails, manually copy files:
+```bash
+sudo cp simula-session.desktop /usr/share/xsessions/
+sudo cp simula-session.desktop /usr/share/wayland-sessions/
+sudo cp simula-session /usr/local/bin/
+sudo chmod +x /usr/local/bin/simula-session
+```
 
 ### Manual Testing
 Test the session script directly:
