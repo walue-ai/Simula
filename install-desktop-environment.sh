@@ -11,11 +11,32 @@ if ! command -v nix >/dev/null 2>&1; then
     exit 1
 fi
 
-sudo cp simula-session.desktop /usr/share/wayland-sessions/
+if systemctl is-active --quiet gdm || systemctl is-active --quiet gdm3; then
+    DISPLAY_MANAGER="gdm"
+    SESSION_DIR="/usr/share/wayland-sessions"
+elif systemctl is-active --quiet lightdm; then
+    DISPLAY_MANAGER="lightdm"
+    SESSION_DIR="/usr/share/xsessions"
+elif systemctl is-active --quiet sddm; then
+    DISPLAY_MANAGER="sddm"
+    SESSION_DIR="/usr/share/wayland-sessions"
+else
+    echo "Warning: No known display manager detected. Trying both directories..."
+    DISPLAY_MANAGER="unknown"
+    SESSION_DIR="/usr/share/xsessions"
+fi
+
+sudo mkdir -p "$SESSION_DIR"
+sudo cp simula-session.desktop "$SESSION_DIR/"
+if [ -d "/usr/share/wayland-sessions" ] && [ "$SESSION_DIR" != "/usr/share/wayland-sessions" ]; then
+    sudo mkdir -p /usr/share/wayland-sessions
+    sudo cp simula-session.desktop /usr/share/wayland-sessions/
+fi
+
 sudo cp simula-session /usr/local/bin/
 sudo chmod +x /usr/local/bin/simula-session
 
-if [ -f /usr/share/wayland-sessions/simula-session.desktop ] && [ -x /usr/local/bin/simula-session ]; then
+if [ -f "$SESSION_DIR/simula-session.desktop" ] && [ -x /usr/local/bin/simula-session ]; then
     echo "✓ Session files installed successfully"
 else
     echo "✗ Session file installation failed"
@@ -41,6 +62,18 @@ EOF
 
 echo "Simula Desktop Environment installed successfully!"
 echo "You can now select 'Simula VR Desktop' from your login manager."
+echo ""
+echo "To activate the changes, restart your display manager:"
+if [ "$DISPLAY_MANAGER" = "gdm" ]; then
+    echo "  sudo systemctl restart gdm"
+elif [ "$DISPLAY_MANAGER" = "lightdm" ]; then
+    echo "  sudo systemctl restart lightdm"
+elif [ "$DISPLAY_MANAGER" = "sddm" ]; then
+    echo "  sudo systemctl restart sddm"
+else
+    echo "  sudo systemctl restart display-manager"
+fi
+echo "Then log out and look for 'Simula VR Desktop' in the session selection."
 echo ""
 echo "Note: Make sure you have:"
 echo "1. Nix installed and configured"
